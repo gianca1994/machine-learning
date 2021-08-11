@@ -123,6 +123,7 @@ ambient = Floor(
 
 def main():
     movement_counter = 0
+    final_position = 0
 
     time_finish = Funcion.show_main_information(
         ambient.get_size(),
@@ -157,7 +158,12 @@ def main():
             os.system('clear')
             break
 
-    print(f'Final position: {ambient.get_position() - 1} | I do: {movement_counter} movements.')
+    for i in vacuum_cleaner_position:
+        if i == '@':
+            break
+        final_position += 1
+
+    print(f'Final position: {final_position} | I do: {movement_counter} movements.')
     print(f'Final condition of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
 
 
