@@ -2,8 +2,8 @@ import os
 from random import randint, choice
 from time import sleep
 
-tiles = randint(5, 15)
 random_movement = randint(1, 2)
+tiles = randint(7, 15)
 
 
 class Floor:
@@ -61,10 +61,6 @@ class Funcion:
         print('The floor is already clean')
 
     @staticmethod
-    def floor_not_cleanable():
-        print('The floor cannot be cleaned here')
-
-    @staticmethod
     def stage(tiles):
         return [x for x in range(tiles)]
 
@@ -87,78 +83,106 @@ class Funcion:
         print(f'Floor tiles: {stage_list}')
         print(f'Dirt: {stains_floor}')
         print(f'Initial position: {position}')
-        time_finish = int(input('Seconds the vacuum cleaner will run: '))
         input('Press any key to start the vacuum cleaner work...')
         print()
-        return time_finish
 
     @staticmethod
     def check_the_floor(stains_floor, position):
-
-        if stains_floor[position] == ' ':
-            Funcion.clean_floor()
-
+        if stains_floor[position] == 'x':
+            stains_floor[position] = '+'
         elif stains_floor[position] == '+':
             stains_floor[position] = ' '
-            Funcion.clean_up()
-
-        elif stains_floor[position] == 'x':
-            stains_floor[position] = '+'
-            Funcion.clean_up()
-
-        else:
-            Funcion.floor_not_cleanable()
-
         return stains_floor
 
-
-ambient = Floor(
-    tiles,
-    Funcion.stage(tiles),
-    Funcion.generate_floor(tiles),
-    Funcion.position_initial(Funcion.stage(tiles)),
-    random_movement
-)
+    @staticmethod
+    def auto_floor():
+        ambient = Floor(
+            tiles,
+            Funcion.stage(tiles),
+            Funcion.generate_floor(tiles),
+            Funcion.position_initial(Funcion.stage(tiles)),
+            random_movement
+        )
+        return ambient
 
 
 def main():
     movement_counter = 0
     final_position = 0
     aspirated = 0
+    ambient = Funcion.auto_floor()
 
-    time_finish = Funcion.show_main_information(
+    Funcion.show_main_information(
         ambient.get_size(),
         ambient.get_stage_list(),
         ambient.get_stains_floor(),
         ambient.get_position()
     )
 
+    clean_history = [False for _ in range(ambient.get_size())]
+
+    position_left = ambient.get_position()
+    position_right = abs(ambient.get_stage_list()[-1] - ambient.get_position())
+
+    if position_left < position_right:
+        ambient.set_move(1)
+    else:
+        ambient.set_move(2)
+
     while True:
+
+        new_stain_position = randint(0, ambient.get_size() - 1)
+
+        floor_in_position = ambient.get_stains_floor()
+
+        if not floor_in_position[new_stain_position] == '#' or floor_in_position[new_stain_position] == 'x':
+            if floor_in_position[new_stain_position] == '+':
+                floor_in_position[new_stain_position] = 'x'
+            elif floor_in_position[new_stain_position] == ' ':
+                floor_in_position[new_stain_position] = '+'
 
         os.system('clear')
 
         vacuum_cleaner_position = [' ' for _ in range(ambient.get_size())]
         vacuum_cleaner_position[ambient.get_position()] = "@"
 
-        if ambient.get_stains_floor()[ambient.get_position()] == 'x' or '+' or '#':
-            aspirated += 1
-
+        print(clean_history)
         print(f'The vacuum cleaner is on the tile: {ambient.get_position()}')
         print(f'Current state of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
-        ambient.set_stains_floor(Funcion.check_the_floor(ambient.get_stains_floor(), ambient.get_position()))
 
-        if ambient.get_position() <= 0:
+        if ambient.get_stains_floor()[ambient.get_position()] == 'x' or '+' or '#':
+            if not clean_history[ambient.get_position()]:
+
+                if ambient.get_stains_floor()[ambient.get_position()] == '#':
+                    clean_history[ambient.get_position()] = True
+                    aspirated += 2
+                    print('Floor cleaned')
+
+                elif ambient.get_stains_floor()[ambient.get_position()] == 'x':
+                    ambient.set_stains_floor(
+                        Funcion.check_the_floor(ambient.get_stains_floor(), ambient.get_position()))
+                    ambient.set_stains_floor(
+                        Funcion.check_the_floor(ambient.get_stains_floor(), ambient.get_position()))
+                    aspirated += 2
+                    print('Floor cleaned')
+
+                elif ambient.get_stains_floor()[ambient.get_position()] == '+':
+                    ambient.set_stains_floor(
+                        Funcion.check_the_floor(ambient.get_stains_floor(), ambient.get_position()))
+                    aspirated += 1
+                    print('Floor cleaned')
+
+        if ambient.get_position() == ambient.get_stage_list()[0]:
             ambient.set_move(2)
-        elif ambient.get_position() >= ambient.get_size() - 1:
+        elif ambient.get_position() >= ambient.get_stage_list()[-1]:
             ambient.set_move(1)
 
         ambient.move_left() if ambient.get_move() == 1 else ambient.move_right()
 
         sleep(1)
         movement_counter += 1
-        time_finish -= 1
 
-        if time_finish <= 0:
+        if False not in clean_history:
             os.system('clear')
             break
 
@@ -170,7 +194,7 @@ def main():
     print(f'Final position: {final_position} | I do: {movement_counter} movements.')
     print(f'Final condition of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
 
-    print(str(aspirated))
+    print(f'Number of vacuums: {str(aspirated)}')
 
 
 if __name__ == '__main__':
