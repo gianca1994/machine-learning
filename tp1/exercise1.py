@@ -87,10 +87,8 @@ class Funcion:
         print(f'Floor tiles: {stage_list}')
         print(f'Dirt: {stains_floor}')
         print(f'Initial position: {position}')
-        time_finish = int(input('Seconds the vacuum cleaner will run: '))
         input('Press any key to start the vacuum cleaner work...')
         print()
-        return time_finish
 
     @staticmethod
     def check_the_floor(stains_floor, position):
@@ -111,6 +109,11 @@ class Funcion:
 
         return stains_floor
 
+    @staticmethod
+    def actual_position_aspirated(actual_position):
+        if actual_position == 'x' or actual_position == '+' or actual_position == '#':
+            return True
+
 
 ambient = Floor(
     tiles,
@@ -123,10 +126,9 @@ ambient = Floor(
 
 def main():
     movement_counter = 0
-    final_position = 0
     aspirated = 0
 
-    time_finish = Funcion.show_main_information(
+    Funcion.show_main_information(
         ambient.get_size(),
         ambient.get_stage_list(),
         ambient.get_stains_floor(),
@@ -140,7 +142,9 @@ def main():
         vacuum_cleaner_position = [' ' for _ in range(ambient.get_size())]
         vacuum_cleaner_position[ambient.get_position()] = "@"
 
-        if ambient.get_stains_floor()[ambient.get_position()] == 'x' or '+' or '#':
+        actual_position = ambient.get_stains_floor()[ambient.get_position()]
+
+        if Funcion.actual_position_aspirated(actual_position):
             aspirated += 1
 
         print(f'The vacuum cleaner is on the tile: {ambient.get_position()}')
@@ -152,25 +156,12 @@ def main():
         elif ambient.get_position() >= ambient.get_size() - 1:
             ambient.set_move(1)
 
+        print(f'Total number of aspirated: {str(aspirated)}')
+
         ambient.move_left() if ambient.get_move() == 1 else ambient.move_right()
 
         sleep(1)
         movement_counter += 1
-        time_finish -= 1
-
-        if time_finish <= 0:
-            os.system('clear')
-            break
-
-    for i in vacuum_cleaner_position:
-        if i == '@':
-            break
-        final_position += 1
-
-    print(f'Final position: {final_position} | I do: {movement_counter} movements.')
-    print(f'Final condition of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
-
-    print(str(aspirated))
 
 
 if __name__ == '__main__':

@@ -52,14 +52,6 @@ class Floor:
 
 
 class Funcion:
-    @staticmethod
-    def clean_up():
-        print('Floor cleaned')
-
-    @staticmethod
-    def clean_floor():
-        print('The floor is already clean')
-
 
     @staticmethod
     def stage(tiles):
@@ -89,10 +81,15 @@ class Funcion:
 
     @staticmethod
     def check_the_floor(stains_floor, position):
-        print(Funcion.clean_up())
+        print('Floor cleaned')
         if stains_floor[position] == 'x' or stains_floor[position] == '+':
             stains_floor[position] = ' '
         return stains_floor
+
+    @staticmethod
+    def actual_position_aspirated(actual_position):
+        if actual_position == 'x' or actual_position == '+' or actual_position == '#':
+            return True
 
 
 ambient = Floor(
@@ -129,14 +126,16 @@ def main():
         print(f'The vacuum cleaner is on the tile: {ambient.get_position()}')
         print(f'Current state of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
 
+        if Funcion.actual_position_aspirated(ambient.get_stains_floor()[ambient.get_position()]):
+            aspirated += 2
+
         if not clean_history[ambient.get_position()]:
             ambient.set_stains_floor(Funcion.check_the_floor(ambient.get_stains_floor(), ambient.get_position()))
-        else:
-            print(Funcion.clean_floor())
-
-        if ambient.get_stains_floor()[ambient.get_position()] == 'x' or '+' or '#':
             clean_history[ambient.get_position()] = True
-            aspirated += 2
+        else:
+            print('The floor is already clean')
+
+        print(f'Total number of aspirated:  {str(aspirated)}')
 
         if ambient.get_position() == ambient.get_stage_list()[0]:
             ambient.set_move(2)
@@ -159,8 +158,7 @@ def main():
 
     print(f'Final position: {final_position} | I do: {movement_counter} movements.')
     print(f'Final condition of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
-
-    print(f'Number of vacuums: {str(aspirated)}')
+    print(f'Total number of aspirated:  {str(aspirated)}')
 
 
 if __name__ == '__main__':
