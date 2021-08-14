@@ -151,12 +151,7 @@ def main():
             os.system('clear')
             break
 
-    for i in vacuum_cleaner_position:
-        if i == '@':
-            break
-        final_position += 1
-
-    print(f'Final position: {final_position} | I do: {movement_counter} movements.')
+    print(f'Final position: {vacuum_cleaner_position.index("@")} | I do: {movement_counter} movements.')
     print(f'Final condition of the floor: \n{vacuum_cleaner_position}\n{ambient.get_stains_floor()}')
     print(f'Total number of aspirated:  {str(aspirated)}')
 
