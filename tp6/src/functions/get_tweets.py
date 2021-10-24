@@ -8,21 +8,24 @@ def request_tweets(params):
     if response.status_code == 200:
         return response.json()
 
-def recopilation_tweets(num_page):
+
+def recopilation_tweets(num_pages, word):
     tweets = []
     total_message = []
+
     while True:
         response = request_tweets(Settings.PARAMS)
+        print(response['meta'])
 
-        params_edit(response['meta']['next_token'])
-        
-        tweets.append(response['data'])
-
-        num_page -= 1
-        if num_page <= 0:
+        if num_pages <= 0 or len(response['meta']) <= 3:
+            tweets.append(response['data'])
             for i in tweets:
                 for j in i:
                     total_message.append(j)
             break
+
+        params_edit(response['meta']['next_token'], word)
+        tweets.append(response['data'])
+        num_pages -= 1
 
     return total_message
