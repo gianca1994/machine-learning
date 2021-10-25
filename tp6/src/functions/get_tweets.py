@@ -15,7 +15,7 @@ def recopilation_tweets(num_pages, word):
 
     while True:
         response = request_tweets(Settings.PARAMS)
-        print(response['meta'])
+        #print(response['meta'])
 
         if num_pages <= 0 or len(response['meta']) <= 3:
             tweets.append(response['data'])

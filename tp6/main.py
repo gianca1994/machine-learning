@@ -6,6 +6,10 @@ import pandas as pd
 from src.functions.get_tweets import recopilation_tweets
 from src.methods.tokenization import tokenization
 from src.utilities.parameter_editor import parameter_updater
+from src.methods.stop_words import  stop_words
+from src.methods.pos import labeling
+from src.methods.lemmatization import lemmatization
+from src.methods.lemmatization import stemming
 
 
 def option_reading():
@@ -32,7 +36,15 @@ def main():
     df = pd.json_normalize(total_message)
 
     tokenized_text_dataframe = tokenization(df)
-    print(tokenized_text_dataframe)
+    words = tokenized_text_dataframe['tokenized_text']
+    #final_stop = stop_words(words)
+    #pos = labeling(words)
+    deviration = stemming(words)
+    lematization = lemmatization(words)
+    print(deviration, lematization)
+
+    
+    
     # generate_wordcloud(tokenized_text_dataframe)
 
 
