@@ -1,7 +1,8 @@
+from nltk.util import pr
 import requests
 from src.utilities.constants import Settings
 from src.utilities.parameter_editor import params_edit
-
+import pandas as pd
 
 def request_tweets(params):
     response = requests.get(url=Settings.URL, headers=Settings.HEADERS, params=params)
@@ -9,14 +10,14 @@ def request_tweets(params):
         return response.json()
 
 
-def recopilation_tweets(num_pages, word):
+def recopilation_tweets(num_pages, word, lang):
     tweets = []
     total_message = []
 
     while True:
         response = request_tweets(Settings.PARAMS)
-        #print(response['meta'])
 
+        num_pages -= 1
         if num_pages <= 0 or len(response['meta']) <= 3:
             tweets.append(response['data'])
             for i in tweets:
@@ -24,8 +25,7 @@ def recopilation_tweets(num_pages, word):
                     total_message.append(j)
             break
 
-        params_edit(response['meta']['next_token'], word)
+        params_edit(response['meta']['next_token'], word, lang)
         tweets.append(response['data'])
-        num_pages -= 1
 
     return total_message
