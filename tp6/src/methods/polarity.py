@@ -1,7 +1,7 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
-def polarity(dataframe):
+def polarity(dataframe, word_name):
     sentiment_analyzer = SentimentIntensityAnalyzer()
     dataframe["negative"], dataframe["neutral"], dataframe["positive"], dataframe["result"] = "", "", "", ""
     negative, positive, neutral = 0, 0, 0
@@ -20,6 +20,5 @@ def polarity(dataframe):
             row["result"] = "Neutral"
             neutral += 1
 
-    print(dataframe["result"])
-    print(positive, neutral, negative)
+    dataframe.to_csv(f'results/{word_name}/{word_name}-PolarityAnalysis.csv')
     
