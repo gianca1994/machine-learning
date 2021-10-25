@@ -67,6 +67,9 @@ def main():
     # Lematizacion
     lemmatization(words, word)
 
+    # Polarizacion
+    polarity(df, word)
+
     generate_wordcloud(tokens_without_sw, word)
 
 
