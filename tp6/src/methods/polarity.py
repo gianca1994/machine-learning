@@ -1,5 +1,5 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-
+import matplotlib.pyplot as plt
 
 def polarity(dataframe, word_name):
     sentiment_analyzer = SentimentIntensityAnalyzer()
@@ -19,6 +19,13 @@ def polarity(dataframe, word_name):
         else :
             row["result"] = "Neutral"
             neutral += 1
+
+    ranges = ["Positive","Negative","Neutral"]
+    colores = ["#EE6055","#60D394","#AAF683","#FFD97D","#FF9B85"]
+    plt.pie(dataframe['result'].value_counts().tolist(), labels=ranges, autopct="%0.1f %%", colors=colores)
+    plt.axis("equal")
+    plt.savefig(f'results/{word_name}/{word_name}-polarity.png')
+    plt.show()
 
     dataframe.to_csv(f'results/{word_name}/{word_name}-PolarityAnalysis.csv')
     
