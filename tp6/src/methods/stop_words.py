@@ -12,7 +12,7 @@ def stop_words(words, word, lang):
     all_words = " ".join(map(str.lower, final))
 
     all_stop = stopwords.words('spanish') if lang == 'es' else stopwords.words('english')
-
+    print(all_stop)
     text_tokens = word_tokenize(all_words)
     tokens_without_sw = []
 
